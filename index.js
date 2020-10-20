@@ -5,6 +5,78 @@ const STORE = {
     savedRecipes : []
 }
 
+function grocerySubmit(){
+    $('.groceryListButton').submit(event =>{
+        event.preventDefault();
+
+        const groceryObject = {};
+
+        for(let i=0;i<STORE.savedRecipes.length;i++){      
+            STORE.savedRecipes[i].extendedIngredients.forEach(function(ingrs){
+                if(ingrs.original in groceryObject){
+                    groceryObject[ingrs.name][0] += ingrs.amount
+                }
+                else{
+                    groceryObject[ingrs.name] = [ingrs.amount,ingrs.measures.metric.unitShort];
+                }
+            })     
+        }
+        console.log(groceryObject)
+        renderGroceryList(groceryObject);
+
+        $('.js-saved').html("");
+        $('.js-recipe').html("");
+    })
+}
+
+function renderGroceryList(groceryObject){
+    let groceryListHTML = "<h3>Grocery List</h3>";
+
+    let groceryArray = Object.entries(groceryObject);
+    console.log(groceryArray)
+
+    for(let i=0;i<groceryArray.length;i++){
+        groceryListHTML += `<ul>
+            <li>${groceryArray[i][0]} - ${groceryArray[i][1][0]} ${groceryArray[i][1][1]}</li>
+        </ul>`
+    }
+    
+    groceryListHTML += `
+    <form class="removeGrocery">
+        <button type="submit">Back to Generator</button>
+    </form>
+    `
+    $('.content').toggleClass('hidden');
+    $('.groceryList').html(groceryListHTML);
+}
+
+function endGroceryListButton(){
+    $('.groceryList').on('submit','removeGrocery',event=>{
+        event.preventDefault();
+
+        $('.groceryList').html("");
+        renderSave();
+        $('.content').toggleClass('hidden');
+    })
+}
+
+function getNutrition(ingredient){
+    let nutritionURL =`https://api.edamam.com/api/nutrition-data?app_id=a97ec4a6&app_key=b504a6ebf4ca24cb69019c2f626e3734&ingr=${ingredient}`
+    
+    fetch(nutritionURL)
+    .then(response =>{
+        if(response.ok){
+            return response.json();
+        }
+        throw new Error(response.statusText);
+    })  
+    .then(responseJson => {
+        console.log(responseJson);
+        return responseJson;
+    })
+    .catch(error=> alert(error.message));
+}
+
 function buttonSubmit(){
     //Event listener for the "Generate!" button
     $('.searchButton').submit(event=> {
@@ -118,6 +190,7 @@ function pageLoaded(){
     buttonSubmit();
     saveSubmit();
     deleteSubmit();
-
+    grocerySubmit();
+    endGroceryListButton();
 }
 

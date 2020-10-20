@@ -7,32 +7,41 @@
 </head>
 <body>
     <!--Intro elements with the website title and some brief instructions for how to work the site.-->
-    <div class="intro-section group">
+    <div class="intro-section">
         <h1>Hungry, Hungry Something</h1>
-        <h2>Find fun recipes at random or using ingredients in your fridge!</h2>
-        <p>Little application to find fun new recipes! In the below search box you can look up recipes at random or enter a specific ingredient you'd like to use.</p>
+        <h2>Find fun recipes at random and create a handy grocery list!</h2>
+        <p>Little application to find fun new recipes!</p>
         <p>See something you like? Feel free to save it! We'll make you a grocery list for everything you'd like to make!</p>
         <p>Change your mind on something? You can remove it! Be careful, once you've deleted something, you won't be able to bring it back.</p>
-    </div>
-
-    <!--Section with input bar and submit button for searching.-->
-    <div class="input-section group">
-        <form class="searchButton">
-            <button type="submit">Generate!</button>
-        </form>
+        
     </div>
 
     <!--Section for content-->
-    <div class="group">
+    <div class="content">
+        <form class="searchButton">
+            <button type="submit">Generate!</button>
+        </form>
         <!--Section where the generated recipes will appear.-->
-        <div class="js-recipe sub-group">
+        <div class="js-recipe group">
             
         </div>
 
         <!--Side bar with saved recipes-->
-        <div class="js-saved sub-group">
+        <div class="group">
+            <h3>Saved Recipes:</h3>
+            <form class="groceryListButton">
+                <button type="submit">Grocery List</button>
+            </form>
 
+            <div class="js-saved">
+                
+            </div>
         </div>
+    </div>
+
+    <!--Section for grocery list when created-->
+    <div class="groceryList">
+
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="index.js"></script>
