@@ -1,5 +1,10 @@
 "use strict";
 
+const STORE = {
+    currRecipe : {},
+    savedRecipes : []
+}
+
 function buttonSubmit(){
     //Event listener for the "Generate!" button
     $('.searchButton').submit(event=> {
@@ -10,14 +15,9 @@ function buttonSubmit(){
     });    
 }
 
-function getResults(inputIngredient){
-    //Response from API is structured differently depending on random or ingredient search - indicator to handle this
-    let ingredientProvided = false;
-
+function getResults(){
     const apiKey = "9e35ae1ce4c14d529b4239ac15c27cd0";
-    let searchURL = "https://api.spoonacular.com/recipes/random?apiKey=9e35ae1ce4c14d529b4239ac15c27cd0&tags=dinner&number=1";
-    
-    let responseObject = {};
+    let searchURL = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}&tags=dinner&number=1`;
 
     fetch(searchURL)
     .then(response =>{
@@ -28,12 +28,13 @@ function getResults(inputIngredient){
     })
     .then(responseJson => {
         console.log(responseJson);
-        pushRecipe(responseJson.recipes[0]);
+        STORE.currRecipe = responseJson.recipes[0];
+        renderRecipe(responseJson.recipes[0]);
     })
     .catch(error=> alert(error.message));
 }
 
-function pushRecipe(recipeObject){
+function renderRecipe(recipeObject){
     //Grab the recipe object and get the correct input variables
     const recipeName = recipeObject.title;
     const recipeSrc = recipeObject.image;
@@ -43,6 +44,9 @@ function pushRecipe(recipeObject){
     const recipeHTML = `
         <h3>${recipeName}</h3>
         <img src="${recipeSrc}" width="300">
+        <form class="saveButton">
+            <button type="submit">Save!</button>
+        </form>
         <h4>Ingredients:</h4>
         <ul>
             ${ingredientList}    
@@ -56,6 +60,31 @@ function pushRecipe(recipeObject){
     $(".js-recipe").html(recipeHTML);
 }
 
+function saveSubmit(){
+    $('.js-recipe').on('submit','.saveButton',event =>{
+        event.preventDefault();
+        $('.js-recipe').html("");
+        STORE.savedRecipes.push(STORE.currRecipe);
+        console.log(STORE.savedRecipes)
+        $('.searchButton').trigger('reset');
+        renderSave();
+    })
+}
+
+function renderSave(){
+    let savedHTML = "";
+
+    for(let i=0;i<STORE.savedRecipes.length;i++){
+        savedHTML += `
+        <h4>${STORE.savedRecipes[i].title}</h4>
+        <img src="${STORE.savedRecipes[i].image}" width="100">
+        <form class="savedRemove${i}">
+            <button type="submit">Remove</button>
+        </form>`
+    }
+
+    $('.js-saved-recipes').html(savedHTML);
+}
 function ingredientHTML(ingredientArray){
     let ingredientList = "";
     for(let i =0; i < ingredientArray.length;i++){
@@ -70,5 +99,7 @@ $(pageLoaded);
 
 function pageLoaded(){
     buttonSubmit();
+    saveSubmit();
+
 }
 
