@@ -63,6 +63,7 @@ function renderRecipe(recipeObject){
 function saveSubmit(){
     $('.js-recipe').on('submit','.saveButton',event =>{
         event.preventDefault();
+
         $('.js-recipe').html("");
         STORE.savedRecipes.push(STORE.currRecipe);
         console.log(STORE.savedRecipes)
@@ -71,19 +72,35 @@ function saveSubmit(){
     })
 }
 
+function deleteSubmit(){
+    $('.js-saved').on('submit','.deleteButton',event=>{
+        event.preventDefault();
+
+        let deleteID = $(event.currentTarget).parent().attr('class');
+        
+        STORE.savedRecipes.splice(deleteID,1);
+        
+        renderSave();
+
+    })
+}
+
 function renderSave(){
     let savedHTML = "";
 
     for(let i=0;i<STORE.savedRecipes.length;i++){
         savedHTML += `
-        <h4>${STORE.savedRecipes[i].title}</h4>
-        <img src="${STORE.savedRecipes[i].image}" width="100">
-        <form class="savedRemove${i}">
-            <button type="submit">Remove</button>
-        </form>`
+        <div class="${i}">
+            <h4>${STORE.savedRecipes[i].title}</h4>
+            <img src="${STORE.savedRecipes[i].image}" width="100">
+            <form class="deleteButton">
+                <button type="submit">Remove!</button>
+            </form>
+        </div>
+        `
     }
 
-    $('.js-saved-recipes').html(savedHTML);
+    $('.js-saved').html(savedHTML);
 }
 function ingredientHTML(ingredientArray){
     let ingredientList = "";
@@ -100,6 +117,7 @@ $(pageLoaded);
 function pageLoaded(){
     buttonSubmit();
     saveSubmit();
+    deleteSubmit();
 
 }
 
