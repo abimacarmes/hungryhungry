@@ -3,36 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hungry, Hungry Something</title>
+    <title>Hungry, Hungry Humans</title>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet" type="text/css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
 </head>
 <body>
     <!--Intro elements with the website title and some brief instructions for how to work the site.-->
-    <div class="intro-section">
-        <h1>Hungry, Hungry Something</h1>
-        <h2>Find fun recipes at random and create a handy grocery list!</h2>
-        <p>Little application to find fun new recipes!</p>
-        <p>See something you like? Feel free to save it! We'll make you a grocery list for everything you'd like to make!</p>
-        <p>Change your mind on something? You can remove it! Be careful, once you've deleted something, you won't be able to bring it back.</p>
+    <header>
+        <div class="intro-section">
+            <h1>Hungry, Hungry Humans</h1>
+            <h2>Find fun recipes at random and create a handy grocery list!</h2>
+            <p>Little application to find fun new recipes!</p>
+            <p>See something you like? Feel free to save it! We'll make you a grocery list for everything you'd like to make!</p>
+            <p>Change your mind on something? You can remove it! Be careful, once you've deleted something, you won't be able to bring it back.</p>
+        </div>
         
-    </div>
+    </header>
 
     <!--Section for content-->
     <div class="content">
-        <form class="searchButton">
-            <button type="submit">Generate!</button>
-        </form>
         <!--Section where the generated recipes will appear.-->
-        <div class="js-recipe group">
-            
+        <div class="group triple">
+            <div class="sectionHeader">
+                <h3>Generate New Recipes:</h3>
+                <form class="searchButton">
+                    <button type="submit">Generate!</button>
+                </form>
+            </div>
+            <div class="js-recipe">
+        
+            </div>
         </div>
 
         <!--Side bar with saved recipes-->
         <div class="group">
-            <h3>Saved Recipes:</h3>
-            <form class="groceryListButton">
-                <button type="submit">Grocery List</button>
-            </form>
-
+            <div class="sectionHeader">
+                <h3>Saved Recipes:</h3>
+                <form class="groceryListButton">
+                    <button type="submit">Grocery List</button>
+                </form>
+            </div>
             <div class="js-saved">
                 
             </div>
@@ -43,6 +54,10 @@
     <div class="groceryList">
 
     </div>
+
+    <footer>
+        <h5>Big thanks to Bloc! Made using <a href="https://developer.edamam.com/edamam-nutrition-api">Edamam</a> <a href="https://spoonacular.com/food-api">Spoonacular</a>!</h5>
+    </footer>
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="index.js"></script>
 </body>
