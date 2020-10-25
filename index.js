@@ -5,10 +5,58 @@ const STORE = {
     savedRecipes : []
 }
 
+//The "Submit" functions are the event listeners for the various possible user interactions in the app.
+//buttonSubmit: event listener, "Generate" button, calls recipe generating API. 
+function buttonSubmit(){
+    //Event listener for the "Generate!" button
+    $('.searchButton').submit(event=> {
+        event.preventDefault();
+        
+        //Send input to the getResults function
+        getResults();
+    });    
+}
+
+//saveSubmit: event listener, "Save" button, calls render save to save random recipe to the STORE variable and display in saved pannel.
+function saveSubmit(){
+    $('.js-recipe').on('submit','.saveButton',event =>{
+        event.preventDefault();
+
+        //Removes recipe from display
+        $('.js-recipe').html("");
+        
+        //Add recipe to STORE variable
+        STORE.savedRecipes.push(STORE.currRecipe);
+        console.log(STORE.savedRecipes)
+
+        //Calls render function to refresh saved recipes pannel.
+        renderSave();
+    })
+}
+
+//deleteSubmit: event listener, "Remove" button, calls save render function and removes the given recipe from the STORE variable and saved pannel.
+function deleteSubmit(){
+    $('.js-saved').on('submit','.deleteButton',event=>{
+        event.preventDefault();
+
+        //Gets the ID of the recipe the user wants to delete.
+        let deleteID = $(event.currentTarget).parent().attr('class');
+        
+        //Removes the selected recipe from the STORE variable
+        STORE.savedRecipes.splice(deleteID,1);
+        
+        //Calls render function to refresh saved recipes pannel.
+        renderSave();
+
+    })
+}
+
+//grocerySubmit: event listener, "Grocery List" button, calls the grocery render function and alters view of DOM with generated grocery list.
 function grocerySubmit(){
     $('.groceryListButton').submit(event =>{
         event.preventDefault();
 
+        //Loops through the saved recipes and their respective ingredients to create a combined grocery list.
         const groceryObject = {};
 
         for(let i=0;i<STORE.savedRecipes.length;i++){      
@@ -22,13 +70,30 @@ function grocerySubmit(){
             })     
         }
         console.log(groceryObject)
+
+        //Calls the render function to change display to Grocery List mode.
         renderGroceryList(groceryObject);
 
+        //Removes any displayed recipe and saved recipes.
         $('.js-saved').html("");
         $('.js-recipe').html("");
     })
 }
 
+//endGroceryListSubmit: event listener, "Remove Grocery" button to go back to recipe generator view with saved recipe pannel. 
+function endGroceryListSubmit(){
+    $('.groceryList').on('submit','.removeGrocery',event=>{
+        event.preventDefault();
+
+        $('.groceryList').html("");
+        renderSave();
+        $('.content').toggleClass('hidden');
+    })
+}
+
+//Render functions are for altering the DOM
+
+//Creates HTML and displays Grocery List in the DOM
 function renderGroceryList(groceryObject){
     let groceryListHTML = "<h4>Grocery List:</h4>";
 
@@ -55,26 +120,29 @@ function renderGroceryList(groceryObject){
     $('.groceryList').html(groceryListHTML);
 }
 
-function endGroceryListButton(){
-    $('.groceryList').on('submit','.removeGrocery',event=>{
-        event.preventDefault();
+//Looks at the STORE variable and displays saved recipes in the save pannel.
+function renderSave(){
+    let savedHTML = "";
 
-        $('.groceryList').html("");
-        renderSave();
-        $('.content').toggleClass('hidden');
-    })
+    for(let i=0;i<STORE.savedRecipes.length;i++){
+        savedHTML += `
+        <div class="item">
+            <div class="${i}">
+                <h4>${STORE.savedRecipes[i].title}</h4>
+                <form class="deleteButton">
+                    <button type="submit">Remove!</button>
+                </form>
+                <img src="${STORE.savedRecipes[i].image}" width="100">
+            </div>
+        </div>
+        `
+    }
+
+    $('.js-saved').html(savedHTML);
 }
 
-function buttonSubmit(){
-    //Event listener for the "Generate!" button
-    $('.searchButton').submit(event=> {
-        event.preventDefault();
-        
-        //Send input to the getResults function
-        getResults();
-    });    
-}
-
+//Get functions access APIs
+//Accesses the Spoonacular API to generate a random recipe to be displayed.
 function getResults(){
     const apiKey = "9e35ae1ce4c14d529b4239ac15c27cd0";
     let searchURL = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}&tags=dinner&number=1`;
@@ -93,44 +161,7 @@ function getResults(){
     })
     .catch(error=> alert(error.message));
 }
-
-function generateRecipeHTML(recipeObject){
-    console.log(recipeObject)
-    //Grab the recipe object and get the correct input variables
-    const recipeName = recipeObject.title;
-    const recipeSrc = recipeObject.image;
-
-    const ingredientList = ingredientHTML(recipeObject.extendedIngredients);
-    const instructionList = instructionHTML(recipeObject.analyzedInstructions[0].steps);
-
-    const nutritionArrayInput = getIngredientArray(recipeObject.extendedIngredients);
-    const recipeHTML = `
-            <h3>${recipeName}</h3>
-            <img src="${recipeSrc}">
-            <form class="saveButton">
-                <button type="submit">Save!</button>
-            </form> 
-            <h4>Ingredients:</h4>
-            <ul>
-                ${ingredientList}    
-            </ul>
-            <h4>Steps:</h4>
-            <ol>
-                ${instructionList}
-            </ol>
-    `
-    getNutrition(recipeObject.title,nutritionArrayInput,recipeHTML);
-}
-
-function getIngredientArray(ingredientArray){
-    let recipeIngredients = [];
-
-    for(let i=0;i<ingredientArray.length;i++){
-        recipeIngredients.push(ingredientArray[i].name+" "+ingredientArray[i].measures.metric.amount+" "+ingredientArray[i].measures.metric.unitShort);
-    }
-    return recipeIngredients;
-}
-
+//Accesses the Edamam API to get the nutritional information of the generated recipe.
 function getNutrition(recipeTitle,recipeIngredients,recipeHTML){
     let totalCalories =0;
     var myHeaders = new Headers();
@@ -159,51 +190,47 @@ function getNutrition(recipeTitle,recipeIngredients,recipeHTML){
     .catch(error => console.log(error.message));
 }
 
-function saveSubmit(){
-    $('.js-recipe').on('submit','.saveButton',event =>{
-        event.preventDefault();
+//Generating/creating functions for formatting and getting information in the correct format.
+//Takes the array of ingredients in the Spoonacular format and extracts the pertinent information
+function createIngredientArray(ingredientArray){
+    let recipeIngredients = [];
 
-        $('.js-recipe').html("");
-        STORE.savedRecipes.push(STORE.currRecipe);
-        console.log(STORE.savedRecipes)
-        $('.searchButton').trigger('reset');
-        renderSave();
-    })
-}
-
-function renderSave(){
-    let savedHTML = "";
-
-    for(let i=0;i<STORE.savedRecipes.length;i++){
-        savedHTML += `
-        <div class="item">
-            <div class="${i}">
-                <h4>${STORE.savedRecipes[i].title}</h4>
-                <form class="deleteButton">
-                    <button type="submit">Remove!</button>
-                </form>
-                <img src="${STORE.savedRecipes[i].image}" width="100">
-            </div>
-        </div>
-        `
+    for(let i=0;i<ingredientArray.length;i++){
+        recipeIngredients.push(ingredientArray[i].name+" "+ingredientArray[i].measures.metric.amount+" "+ingredientArray[i].measures.metric.unitShort);
     }
-
-    $('.js-saved').html(savedHTML);
+    return recipeIngredients;
 }
 
-function deleteSubmit(){
-    $('.js-saved').on('submit','.deleteButton',event=>{
-        event.preventDefault();
+//Takes the Spoonacular recipe object and creates the HTML for displaying the recipe.
+function generateRecipeHTML(recipeObject){
+    console.log(recipeObject)
+    //Grab the recipe object and get the correct input variables
+    const recipeName = recipeObject.title;
+    const recipeSrc = recipeObject.image;
 
-        let deleteID = $(event.currentTarget).parent().attr('class');
-        
-        STORE.savedRecipes.splice(deleteID,1);
-        
-        renderSave();
+    const ingredientList = ingredientHTML(recipeObject.extendedIngredients);
+    const instructionList = instructionHTML(recipeObject.analyzedInstructions[0].steps);
 
-    })
+    const nutritionArrayInput = createIngredientArray(recipeObject.extendedIngredients);
+    const recipeHTML = `
+            <h3>${recipeName}</h3>
+            <img src="${recipeSrc}">
+            <form class="saveButton">
+                <button type="submit">Save!</button>
+            </form> 
+            <h4>Ingredients:</h4>
+            <ul>
+                ${ingredientList}    
+            </ul>
+            <h4>Steps:</h4>
+            <ol>
+                ${instructionList}
+            </ol>
+    `
+    getNutrition(recipeObject.title,nutritionArrayInput,recipeHTML);
 }
 
+//Takes the Spoonacular ingredient array and creates the list elements for each ingredient.
 function ingredientHTML(ingredientArray){
     let ingredientList = "";
     for(let i =0; i < ingredientArray.length;i++){
@@ -214,6 +241,7 @@ function ingredientHTML(ingredientArray){
     return ingredientList;
 }
 
+//Takes the Spoonacular instruction array and creates the list elements for each instruction.
 function instructionHTML(instructionArray){
     let instructionList = "";
     for(let i =0; i < instructionArray.length;i++){
@@ -223,13 +251,15 @@ function instructionHTML(instructionArray){
     return instructionList;
 }
 
+//Waits for the page to load before calling any event listeners.
 $(pageLoaded);
 
+//Calls necessary functions and event listeners.
 function pageLoaded(){
     buttonSubmit();
     saveSubmit();
     deleteSubmit();
     grocerySubmit();
-    endGroceryListButton();
+    endGroceryListSubmit();
 }
 
