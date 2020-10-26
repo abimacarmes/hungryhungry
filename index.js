@@ -23,7 +23,7 @@ function saveSubmit(){
         event.preventDefault();
 
         //Removes recipe from display
-        $('.js-recipe').html("");
+        $('.js-recipe').html('');
         
         //Add recipe to STORE variable
         STORE.savedRecipes.push(STORE.currRecipe);
@@ -75,8 +75,8 @@ function grocerySubmit(){
         renderGroceryList(groceryObject);
 
         //Removes any displayed recipe and saved recipes.
-        $('.js-saved').html("");
-        $('.js-recipe').html("");
+        $('.js-saved').html('');
+        $('.js-recipe').html('');
     })
 }
 
@@ -85,7 +85,7 @@ function endGroceryListSubmit(){
     $('.groceryList').on('submit','.removeGrocery',event=>{
         event.preventDefault();
 
-        $('.groceryList').html("");
+        $('.groceryList').html('');
         renderSave();
         $('.content').toggleClass('hidden');
     })
@@ -95,12 +95,12 @@ function endGroceryListSubmit(){
 
 //Creates HTML and displays Grocery List in the DOM
 function renderGroceryList(groceryObject){
-    let groceryListHTML = "<h4>Grocery List:</h4>";
+    let groceryListHTML = '<h4>Grocery List:</h4>';
 
     let groceryArray = Object.entries(groceryObject);
     console.log(groceryArray)
 
-    let currIngredientStr = "";
+    let currIngredientStr = '';
     let currCalories = 0;
 
     for(let i=0;i<groceryArray.length;i++){
@@ -122,7 +122,7 @@ function renderGroceryList(groceryObject){
 
 //Looks at the STORE variable and displays saved recipes in the save pannel.
 function renderSave(){
-    let savedHTML = "";
+    let savedHTML = '';
 
     for(let i=0;i<STORE.savedRecipes.length;i++){
         savedHTML += `
@@ -144,7 +144,7 @@ function renderSave(){
 //Get functions access APIs
 //Accesses the Spoonacular API to generate a random recipe to be displayed.
 function getResults(){
-    const apiKey = "9e35ae1ce4c14d529b4239ac15c27cd0";
+    const apiKey = '9e35ae1ce4c14d529b4239ac15c27cd0';
     let searchURL = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}&tags=dinner&number=1`;
 
     fetch(searchURL)
@@ -165,9 +165,9 @@ function getResults(){
 function getNutrition(recipeTitle,recipeIngredients,recipeHTML){
     let totalCalories =0;
     var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append('Content-Type', 'application/json');
 
-    var raw = JSON.stringify({"title": recipeTitle,"ingr": recipeIngredients});
+    var raw = JSON.stringify({'title': recipeTitle,'ingr': recipeIngredients});
 
     var requestOptions = {
         method: 'POST',
@@ -175,7 +175,7 @@ function getNutrition(recipeTitle,recipeIngredients,recipeHTML){
         body: raw,
     };
 
-    fetch("https://api.edamam.com/api/nutrition-details?app_id=a97ec4a6&app_key=b504a6ebf4ca24cb69019c2f626e3734", requestOptions)
+    fetch('https://api.edamam.com/api/nutrition-details?app_id=a97ec4a6&app_key=b504a6ebf4ca24cb69019c2f626e3734', requestOptions)
     .then(response => {
         if(response.ok){
             return response.json();
@@ -185,7 +185,7 @@ function getNutrition(recipeTitle,recipeIngredients,recipeHTML){
     .then(responseJson => {
         console.log(responseJson)
         recipeHTML+=`<h4>Total Calories: ${responseJson.calories} - Servings: ${responseJson.yield}</h4>`
-        $(".js-recipe").html(recipeHTML);
+        $('.js-recipe').html(recipeHTML);
     })
     .catch(error => console.log(error.message));
 }
@@ -232,7 +232,7 @@ function generateRecipeHTML(recipeObject){
 
 //Takes the Spoonacular ingredient array and creates the list elements for each ingredient.
 function ingredientHTML(ingredientArray){
-    let ingredientList = "";
+    let ingredientList = '';
     for(let i =0; i < ingredientArray.length;i++){
         let currIngredient = ingredientArray[i];
         ingredientList += `<li>${currIngredient.name} - 
@@ -243,7 +243,7 @@ function ingredientHTML(ingredientArray){
 
 //Takes the Spoonacular instruction array and creates the list elements for each instruction.
 function instructionHTML(instructionArray){
-    let instructionList = "";
+    let instructionList = '';
     for(let i =0; i < instructionArray.length;i++){
         let currInstruction = instructionArray[i];
         instructionList += `<li>${currInstruction.step}</li>`
