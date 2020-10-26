@@ -27,11 +27,11 @@ function saveSubmit(){
         
         //Add recipe to STORE variable
         STORE.savedRecipes.push(STORE.currRecipe);
-        console.log(STORE.savedRecipes)
+        console.log(STORE.savedRecipes);
 
         //Calls render function to refresh saved recipes pannel.
         renderSave();
-    })
+    });
 }
 
 //deleteSubmit: event listener, "Remove" button, calls save render function and removes the given recipe from the STORE variable and saved pannel.
@@ -48,7 +48,7 @@ function deleteSubmit(){
         //Calls render function to refresh saved recipes pannel.
         renderSave();
 
-    })
+    });
 }
 
 //grocerySubmit: event listener, "Grocery List" button, calls the grocery render function and alters view of DOM with generated grocery list.
@@ -62,14 +62,14 @@ function grocerySubmit(){
         for(let i=0;i<STORE.savedRecipes.length;i++){      
             STORE.savedRecipes[i].extendedIngredients.forEach(function(ingrs){
                 if(ingrs.original in groceryObject){
-                    groceryObject[ingrs.name][0] += ingrs.measures.metric.amount
+                    groceryObject[ingrs.name][0] += ingrs.measures.metric.amount;
                 }
                 else{
                     groceryObject[ingrs.name] = [ingrs.measures.metric.amount,ingrs.measures.metric.unitShort];
                 }
             })     
         }
-        console.log(groceryObject)
+        console.log(groceryObject);
 
         //Calls the render function to change display to Grocery List mode.
         renderGroceryList(groceryObject);
@@ -77,7 +77,7 @@ function grocerySubmit(){
         //Removes any displayed recipe and saved recipes.
         $('.js-saved').html('');
         $('.js-recipe').html('');
-    })
+    });
 }
 
 //endGroceryListSubmit: event listener, "Remove Grocery" button to go back to recipe generator view with saved recipe pannel. 
@@ -88,7 +88,7 @@ function endGroceryListSubmit(){
         $('.groceryList').html('');
         renderSave();
         $('.content').toggleClass('hidden');
-    })
+    });
 }
 
 //Render functions are for altering the DOM
@@ -98,24 +98,24 @@ function renderGroceryList(groceryObject){
     let groceryListHTML = '<h4>Grocery List:</h4>';
 
     let groceryArray = Object.entries(groceryObject);
-    console.log(groceryArray)
+    console.log(groceryArray);
 
     let currIngredientStr = '';
     let currCalories = 0;
 
     for(let i=0;i<groceryArray.length;i++){
-        currIngredientStr = `${groceryArray[i][0]} - ${groceryArray[i][1][0]} ${groceryArray[i][1][1]}`
+        currIngredientStr = `${groceryArray[i][0]} - ${groceryArray[i][1][0]} ${groceryArray[i][1][1]}`;
 
         groceryListHTML += `<ul>
             <li>${currIngredientStr}</li>
-        </ul>`
+        </ul>`;
     }
     
     groceryListHTML += `
     <form class="removeGrocery">
         <button type="submit">Back to Generator</button>
-    </form>
-    `
+    </form>`;
+
     $('.content').toggleClass('hidden');
     $('.groceryList').html(groceryListHTML);
 }
@@ -135,7 +135,7 @@ function renderSave(){
                 <img src="${STORE.savedRecipes[i].image}" width="100">
             </div>
         </div>
-        `
+        `;
     }
 
     $('.js-saved').html(savedHTML);
@@ -203,7 +203,7 @@ function createIngredientArray(ingredientArray){
 
 //Takes the Spoonacular recipe object and creates the HTML for displaying the recipe.
 function generateRecipeHTML(recipeObject){
-    console.log(recipeObject)
+    console.log(recipeObject);
     //Grab the recipe object and get the correct input variables
     const recipeName = recipeObject.title;
     const recipeSrc = recipeObject.image;
@@ -226,7 +226,7 @@ function generateRecipeHTML(recipeObject){
             <ol>
                 ${instructionList}
             </ol>
-    `
+    `;
     getNutrition(recipeObject.title,nutritionArrayInput,recipeHTML);
 }
 
@@ -236,7 +236,7 @@ function ingredientHTML(ingredientArray){
     for(let i =0; i < ingredientArray.length;i++){
         let currIngredient = ingredientArray[i];
         ingredientList += `<li>${currIngredient.name} - 
-            ${currIngredient.measures.metric.amount} ${currIngredient.measures.metric.unitShort}</li>`
+            ${currIngredient.measures.metric.amount} ${currIngredient.measures.metric.unitShort}</li>`;
     }
     return ingredientList;
 }
