@@ -8,3 +8,8 @@ Recipes in the saved list can be removed if the user changes their mind.
 Once the user is satisfied with the saved recipes, they can generate a grocery list for these recipes. 
 
 Technologies used: HTML/CSS/JavaScript/jQuery
+
+Future Goals: Update using new things learned throughout the my course with Bloc.
+
+Screenshots:
+![image](/hungryHungryHumans.jfif)
